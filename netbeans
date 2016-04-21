@@ -1,19 +1,9 @@
 #!/bin/bash
 
-echo Starting netbeans container
-(docker run --rm \
-           -e DISPLAY=$DISPLAY \
-           -v /tmp/.X11-unix:/tmp/.X11-unix \
-           -v `pwd`/.netbeans-docker:/home/developer/.netbeans \
-           -v `pwd`:/workspace \
-           shanemikel/netbeans:v8.0.1) 2>/dev/null >&2 &
-containerId=$(docker ps -l -q)
-
-echo Stopping container
-docker stop $containerId
-
-echo Updating xhost configuration
-xhost +local:$(docker inspect --format='{{ .Config.Hostname }}' $containerId)
-
-echo Restarting container
-docker start $containerId
+docker run --rm \
+    --net=host \
+    -e DISPLAY=$DISPLAY \
+    -v $HOME/.Xauthority:/home/developer/.Xauthority \
+    -v `pwd`/.netbeans-docker:/home/developer/.netbeans \
+    -v `pwd`:/workspace \
+    shanemikel/netbeans:v8.0.1

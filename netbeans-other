@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo Adding xhost rule
+xhost +local:
+
+echo Starting netbeans container
+(docker run --rm \
+           -e DISPLAY=$DISPLAY \
+           -v /tmp/.X11-unix:/tmp/.X11-unix \
+           -v `pwd`/.netbeans-docker:/home/developer/.netbeans \
+           -v `pwd`:/workspace \
+           shanemikel/netbeans:v8.0.1) 2>/dev/null >&2 &
+
+sleep 5s
+
+echo Removing xhost rule
+xhost -local:
